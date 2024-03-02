@@ -10,12 +10,18 @@ from urllib.request import urlretrieve
 from prisma import Prisma
 
 from rich import print
+from art import text2art, ASCII_FONTS
 
 prisma = Prisma(auto_register=True)
 
 
 def is_url(string):
     return validators.url(string)
+
+
+def textart(text, font="random"):
+    art_text = text2art(text, font=font)
+    return art_text
 
 
 async def add_banner(content: str) -> None:
@@ -154,7 +160,22 @@ async def handle_add_command(args):
         elif is_url(source):
             await import_banner_from_url(source)
         else:
-            await add_banner(source)
+            if args.ascii:
+                print("Available fonts:")
+                for i, font in enumerate(ASCII_FONTS, start=1):
+                    print(f"{i}. {font}")
+                user_input = int(input("Choose a font (enter the number): "))
+                font = ASCII_FONTS[user_input - 1]
+                ascii_art = textart(source, font)
+                print(f"Generated ASCII art:\n{ascii_art}")
+                user_input = input(
+                    "Are you satisfied with the ASCII art? (y/n) ")
+                if user_input.lower() == 'y':
+                    await add_banner(ascii_art)
+                else:
+                    print("Skipping the addition of this ASCII art.")
+            else:
+                await add_banner(source)
 
 
 async def main() -> None:
@@ -168,6 +189,8 @@ async def main() -> None:
         "add", help="Add a new banner", aliases=["a"])
     add_parser.add_argument(
         "source", nargs="+", help="Content, file path(s), or URL(s) to add as banner(s)")
+    add_parser.add_argument("--ascii", action="store_true",
+                            help="Generate ASCII art from the input text")
     add_parser.set_defaults(func=handle_add_command)
 
     delete_parser = subparsers.add_parser(
@@ -249,11 +272,12 @@ if __name__ == "__main__":
 
 
 # python banner.py add "Hello, World!"
+# python banner.py add /path/to/banner.txt
+# python banner.py add http://example.com/banner.txt
+# python banner.py add "Hello, World!" --ascii
 # python banner.py list --page 1 --page_size 10
 # python banner.py random
 # python banner.py search keyword
-# python banner.py add /path/to/banner.txt
-# python banner.py add http://example.com/banner.txt
 # python banner.py clear
 # python banner.py export --single-file --separator "\n===\n" output.txt
 # python banner.py export --base-name "my_banner" --extension "md"
