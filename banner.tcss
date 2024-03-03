@@ -1,0 +1,39 @@
+Screen {
+  align: center top;
+  layers: below above;
+}
+
+Horizontal {
+  width:100%
+}
+
+Static {
+  margin-top: 3; 
+  width: 100%;
+  # min-height: 20vh;
+  content-align: center middle;
+}
+
+#options_container {
+  height: 3;
+  layer: above;
+}
+
+Select {
+  width: 30%;
+  height: 100%;
+}
+
+#input_text {
+  width: 70%;
+  height: 100%;
+}
+
+#btn_container {
+  # dock: bottom;
+  # height: 10;
+}
+
+#accept_btn, #cancel_btn {
+  width: 50%;
+}

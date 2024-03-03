@@ -12,6 +12,12 @@ from prisma import Prisma
 from rich import print
 from art import text2art, ASCII_FONTS
 
+from textual import on
+from textual.app import App, ComposeResult
+from textual.containers import Horizontal, VerticalScroll
+from textual.widgets import Header, Select, Static, Button, Input
+from textual.reactive import var
+
 prisma = Prisma(auto_register=True)
 
 
@@ -19,13 +25,73 @@ def is_url(string):
     return validators.url(string)
 
 
-def textart(text, font="random"):
+def generate_text_art(text, font="random"):
     art_text = text2art(text, font=font)
     return art_text
 
 
+async def generate_text_art(text: str, font="random"):
+    class AsciiTextGen(App[str]):
+        CSS_PATH = "banner.tcss"
+
+        fonts = ["random"] + ASCII_FONTS
+        i_text = var(text)
+        art_text = var("")
+        selected_font = var("random")
+
+        def get_textart(self) -> str:
+            self.art_text = text2art(self.i_text, font=self.selected_font)
+            return self.art_text
+
+        def compose(self) -> ComposeResult:
+            yield Header()
+            yield Horizontal(
+                Input(
+                    placeholder="Text",
+                    id="input_text",
+                    value=self.i_text,
+                ),
+                Select.from_values(
+                    self.fonts,
+                    id="font_select",
+                    value="random",
+                ),
+                id="options_container"
+            )
+            yield Static(self.get_textart(), id="art_preview")
+            yield Horizontal(
+                Button("Accept", variant="primary", id="accept_btn"),
+                Button("Cancel", id="cancel_btn"),
+                id="btn_container",
+            )
+
+        @on(Select.Changed, "#font_select")
+        def select_changed(self, event: Select.Changed) -> None:
+            self.selected_font = str(event.value)
+            self.query_one("#art_preview").update(self.get_textart())
+
+        @on(Input.Changed, "#input_text")
+        def input_changed(self, event: Input.Changed) -> None:
+            self.i_text = str(event.value)
+            self.query_one("#art_preview").update(self.get_textart())
+
+        @on(Button.Pressed, "#accept_btn")
+        def accept_pressed(self) -> None:
+            self.exit(self.art_text)
+
+        @on(Button.Pressed, "#cancel_btn")
+        def cancel_pressed(self) -> None:
+            self.exit(None)
+
+    app = AsciiTextGen()
+    ascii_art = await app.run_async()
+    return ascii_art
+
+
 async def add_banner(content: str) -> None:
-    await prisma.banners.create(data={content})
+    await prisma.banners.create({
+        "content": content,
+    })
 
 
 async def delete_banner(banner_id: int) -> None:
@@ -161,19 +227,9 @@ async def handle_add_command(args):
             await import_banner_from_url(source)
         else:
             if args.ascii:
-                print("Available fonts:")
-                for i, font in enumerate(ASCII_FONTS, start=1):
-                    print(f"{i}. {font}")
-                user_input = int(input("Choose a font (enter the number): "))
-                font = ASCII_FONTS[user_input - 1]
-                ascii_art = textart(source, font)
-                print(f"Generated ASCII art:\n{ascii_art}")
-                user_input = input(
-                    "Are you satisfied with the ASCII art? (y/n) ")
-                if user_input.lower() == 'y':
+                ascii_art = await generate_text_art(source)
+                if ascii_art is not None:
                     await add_banner(ascii_art)
-                else:
-                    print("Skipping the addition of this ASCII art.")
             else:
                 await add_banner(source)
 
