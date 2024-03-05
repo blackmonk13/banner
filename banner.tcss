@@ -3,11 +3,11 @@ Screen {
   layers: below above;
 }
 
-Horizontal {
+#navigation {
   width:100%
 }
 
-Static {
+#banner_preview {
   margin-top: 3; 
   width: 100%;
   # min-height: 20vh;
@@ -36,4 +36,18 @@ Select {
 
 #accept_btn, #cancel_btn {
   width: 50%;
+}
+
+#prev_btn {
+  dock: left;
+  height: 100%;
+}
+
+#next_btn {
+  dock: right;
+  height: 100%;
+}
+
+#editor_tabs, #edit_tabs, #preview_tab {
+  width: 100%;
 }

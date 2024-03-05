@@ -160,3 +160,4 @@ cython_debug/
 #.idea/
 banners.db
 scratch/
+banner_old.py
