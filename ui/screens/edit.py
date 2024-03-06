@@ -1,11 +1,10 @@
-from prisma import Prisma
 from textual import on
-from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.screen import Screen
-from textual.widgets import Header, Footer, Label, Markdown, TabbedContent, TabPane, TextArea, RichLog
+from textual.widgets import Header, Footer, TabbedContent, TabPane, TextArea, RichLog
 from textual.reactive import var
 
+from ...models import Banner
 from ..dialogs.info import InformationDialog
 
 from ..dialogs.error import ErrorDialog
@@ -21,12 +20,11 @@ class EditBanner(Screen):
         Binding("ctrl+s", "save_banner", "Save"),
         Binding("ctrl+e", "show_tab('edit_tab')", "Edit"),
         Binding("ctrl+p", "show_tab('preview_tab')", "Preview"),
-        Binding("ctrl+q", "go_back", "Back"),
+        Binding("ctrl+x", "go_back", "Back"),
     ]
 
-    def __init__(self, prisma: Prisma, banner_id: int, **kwargs):
+    def __init__(self, banner_id: int, **kwargs):
         super().__init__(**kwargs)
-        self.prisma = prisma
         self.banner_id = banner_id
 
     def compose(self):
@@ -39,17 +37,20 @@ class EditBanner(Screen):
         yield Footer()
 
     async def get_banner(self):
-        banner = await self.prisma.banners.find_first(where={"id": self.banner_id})
+        banner = Banner.get(Banner.id == self.banner_id)
         if banner is not None:
             self.banner_content = banner.content
-            if banner.markedUp is None:
+            if banner.markedUp is None or banner.markedUp == "":
                 self.banner_markup = banner.content
             else:
                 self.banner_markup = banner.markedUp
         else:
             self.app.push_screen(
-                ErrorDialog("Error", f"We could not find a banner with ID {
-                            self.banner_id}")
+                ErrorDialog(
+                    "Error",
+                    f"We could not find a banner with ID {
+                        self.banner_id}"
+                )
             )
 
     async def on_mount(self):
@@ -72,10 +73,10 @@ class EditBanner(Screen):
         self.get_child_by_type(TabbedContent).active = tab
 
     async def action_save_banner(self):
-        result = await self.prisma.banners.update(
-            where={"id": self.banner_id},
-            data={"markedUp": self.banner_markup},
-        )
+        result = (Banner.update({Banner.markedUp: self.banner_markup})
+                  .where(Banner.id == self.banner_id)
+                  .execute())
+
         if result:
             self.app.push_screen(
                 InformationDialog(
