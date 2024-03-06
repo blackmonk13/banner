@@ -39,7 +39,6 @@ class Main(Screen):
 
     def update_banner_preview(self):
         self.total_banners = Banner.select().count()
-        self.title = f"Total Banners #{self.total_banners} Current Index #{self.current_index}"
         if self.total_banners > 0:
             banners = Banner.select().order_by(Banner.id).paginate(
                 self.current_index,
@@ -56,7 +55,7 @@ class Main(Screen):
                 banner_preview: RichLog = self.query_one("#banner_preview")
                 banner_preview.clear()
                 banner_preview.write(current_banner)
-                # self.title = f"Banner #{self.banner_id}"
+                self.title = f"Banner #{self.banner_id}"
 
     def on_mount(self):
         self.update_banner_preview()

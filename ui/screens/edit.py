@@ -48,8 +48,7 @@ class EditBanner(Screen):
             self.app.push_screen(
                 ErrorDialog(
                     "Error",
-                    f"We could not find a banner with ID {
-                        self.banner_id}"
+                    f"We could not find a banner with ID {self.banner_id}"
                 )
             )
 
@@ -80,14 +79,15 @@ class EditBanner(Screen):
         if result:
             self.app.push_screen(
                 InformationDialog(
-                    "[green]Banner saved[/]", f"Banner #{
-                        self.banner_id} has been saved"
+                    "[green]Banner saved[/]", 
+                    f"Banner #{self.banner_id} has been saved"
                 )
             )
         else:
             self.app.push_screen(
-                ErrorDialog("Error", f"Failed to save banner #{
-                            self.banner_id}")
+                ErrorDialog(
+                    "Error", 
+                    f"Failed to save banner #{self.banner_id}")
             )
 
     def action_go_back(self):
