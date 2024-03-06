@@ -48,6 +48,15 @@ Select {
   height: 100%;
 }
 
+#prev_btn, #next_btn {
+  width: 2%;
+  background: #2e2e2e;
+}
+
+#banner_preview {
+  width: 96%;
+}
+
 #editor_tabs, #edit_tabs, #preview_tab {
   width: 100%;
 }
