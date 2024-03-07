@@ -20,7 +20,7 @@ class EditBanner(Screen):
         Binding("ctrl+s", "save_banner", "Save"),
         Binding("ctrl+e", "show_tab('edit_tab')", "Edit"),
         Binding("ctrl+p", "show_tab('preview_tab')", "Preview"),
-        Binding("ctrl+x", "go_back", "Back"),
+        Binding("ctrl+q", "go_back", "Back"),
     ]
 
     def __init__(self, banner_id: int, **kwargs):
@@ -77,12 +77,7 @@ class EditBanner(Screen):
                   .execute())
 
         if result:
-            self.app.push_screen(
-                InformationDialog(
-                    "[green]Banner saved[/]", 
-                    f"Banner #{self.banner_id} has been saved"
-                )
-            )
+            self.notify(f"Banner #{self.banner.id} has been saved")
         else:
             self.app.push_screen(
                 ErrorDialog(

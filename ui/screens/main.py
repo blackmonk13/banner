@@ -1,11 +1,13 @@
 
-from textual import on
+from textual import on, work
 from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.screen import Screen
-from textual.containers import Horizontal
+from textual.containers import Horizontal, Vertical, Container
 from textual.widgets import Footer, Header, Static, Button, RichLog
 from textual.reactive import var
+
+from ..dialogs.yes_or_no import YesNoDialog
 
 from ...models import Banner
 
@@ -19,21 +21,26 @@ class Main(Screen):
     banner_id = var(0)
 
     BINDINGS = [
-        Binding("ctrl+a", "add_banner", "Add"),
+        Binding("insert", "add_banner", "Add"),
         Binding("ctrl+e", "edit_banner", "Edit"),
-        Binding("ctrl+x", "request_quit", "Quit"),
+        Binding("delete", "delete_banner", "Delete"),
+        Binding("ctrl+q", "request_quit", "Quit"),
+        Binding("left,up", "navigate(0)", "", show=False),
+        Binding("right,down", "navigate(1)", "", show=False),
     ]
 
     def compose(self) -> ComposeResult:
         yield Header(
             id="header"
         )
-
-        yield Horizontal(
-            Button("<", id="prev_btn"),
+        yield Container(
             RichLog(highlight=True, markup=True, id="banner_preview"),
-            Button(">", id="next_btn"),
-            id="navigation",
+            Horizontal(
+                Button("<", id="prev_btn"),
+                Button(">", id="next_btn"),
+                id="navigation",
+            ),
+            id="carousel_container"
         )
         yield Footer()
 
@@ -47,7 +54,7 @@ class Main(Screen):
             banner = banners[0]
             self.banner_id = banner.id
             if banner:
-                if banner.markedUp is None or banner.markedUp == "": 
+                if banner.markedUp is None or banner.markedUp == "":
                     current_banner = banner.content
                 else:
                     current_banner = banner.markedUp
@@ -62,6 +69,9 @@ class Main(Screen):
 
     @on(Button.Pressed, "#prev_btn")
     def prev_banner(self) -> None:
+        self.go_to_previous()
+
+    def go_to_previous(self):
         if self.current_index > 1:
             self.current_index -= 1
         else:
@@ -70,11 +80,20 @@ class Main(Screen):
 
     @on(Button.Pressed, "#next_btn")
     def next_banner(self) -> None:
+        self.go_to_next()
+
+    def go_to_next(self):
         if self.current_index < self.total_banners:
             self.current_index += 1
         else:
             self.current_index = 1
         self.update_banner_preview()
+
+    def action_navigate(self, direction: int):
+        if direction > 0:
+            self.go_to_next()
+        else:
+            self.go_to_previous()
 
     def action_add_banner(self):
         self.app.push_screen(
@@ -87,6 +106,21 @@ class Main(Screen):
                 banner_id=self.banner_id
             )
         )
+
+    @work
+    async def action_delete_banner(self):
+        if await self.app.push_screen_wait(
+            YesNoDialog(
+                "[red bold]Delete Banner[/]",
+                "Are you sure you want to delete this banner?\n[yellow1 bold italic]This action cannot be undone.[/]"
+            ),
+        ):
+            result = Banner.delete().where(Banner.id == self.banner_id).execute()
+            if result:
+                self.notify(f"Banner #{self.banner_id} has been deleted")
+                self.go_to_previous()
+            else:
+                self.notify("Failed to delete banner", severity="error")
 
     def action_request_quit(self):
         self.app.exit()

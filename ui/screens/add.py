@@ -17,7 +17,7 @@ class AddBanner(Screen):
 
     BINDINGS = [
         Binding("ctrl+s", "save_banner", "Save"),
-        Binding("ctrl+x", "go_back", "Back"),
+        Binding("ctrl+q", "go_back", "Back"),
     ]
 
     def __init__(self, **kwargs):
@@ -44,12 +44,8 @@ class AddBanner(Screen):
     def action_save_banner(self):
         result = self.banner.save()
         if result:
-            self.app.push_screen(
-                InformationDialog(
-                    "[green]Banner saved[/]",
-                    f"Banner #{self.banner.id} has been saved"
-                )
-            )
+            self.notify(f"Banner #{self.banner.id} has been saved")
+            self.app.pop_screen()
         else:
             self.app.push_screen(
                 ErrorDialog(
