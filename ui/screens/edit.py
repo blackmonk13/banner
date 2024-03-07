@@ -77,7 +77,7 @@ class EditBanner(Screen):
                   .execute())
 
         if result:
-            self.notify(f"Banner #{self.banner.id} has been saved")
+            self.notify(f"Banner #{self.banner_id} has been saved")
         else:
             self.app.push_screen(
                 ErrorDialog(
