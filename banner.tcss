@@ -3,17 +3,22 @@ Screen {
   layers: below above;
 }
 
-#carousel_container{
+#carousel_container, #generate_container {
   align: center top;
   width: 100%;
   height: 100%;
 }
 
-#navigation {
-  dock:bottom;
+#navigation, #options_container {
   width: 100%;
-  height: 4;
+  height: 3;
   layout: grid;
+  
+  grid-gutter: 1;
+}
+
+#navigation {
+  dock: bottom;
   grid-size: 2 1;
 }
 
@@ -21,12 +26,34 @@ Screen {
   width: 100%;
 }
 
-#prev_btn, #next_btn {
-  background: #2e2e2e;
-  # height: 100%;
+#prev_btn {
+  dock: left;
 }
 
+#next_btn {
+  dock: right;
+}
+
+#prev_btn, #next_btn {
+  background: #2e2e2e;
+}
 
 #editor_tabs, #edit_tabs, #preview_tab {
   width: 100%;
+}
+
+#options_container {
+  dock: top;
+  grid-size: 4 1;
+}
+
+#font_select {
+  # width: 30%;
+  height: 100%;
+}
+
+#input_text {
+  # width: 70%;
+  height: 100%;
+  column-span: 3;
 }

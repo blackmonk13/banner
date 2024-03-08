@@ -13,6 +13,7 @@ from ...models import Banner
 
 from .edit import EditBanner
 from .add import AddBanner
+from .gen_ascii_text import GenAsciiText
 
 
 class Main(Screen):
@@ -21,9 +22,10 @@ class Main(Screen):
     banner_id = var(0)
 
     BINDINGS = [
-        Binding("insert", "add_banner", "Add"),
+        Binding("ctrl+i", "add_banner", "Add"),
         Binding("ctrl+e", "edit_banner", "Edit"),
-        Binding("delete", "delete_banner", "Delete"),
+        Binding("ctrl+g", "gen_ascii_text_banner", "Gen. ASCII Text"),
+        Binding("ctrl+d", "delete_banner", "Delete"),
         Binding("ctrl+q", "request_quit", "Quit"),
         Binding("left,up", "navigate(0)", "", show=False),
         Binding("right,down", "navigate(1)", "", show=False),
@@ -112,7 +114,10 @@ class Main(Screen):
         if await self.app.push_screen_wait(
             YesNoDialog(
                 "[red bold]Delete Banner[/]",
-                "Are you sure you want to delete this banner?\n[yellow1 bold italic]This action cannot be undone.[/]"
+                """
+                Are you sure you want to delete this banner?\n
+                [yellow1 bold italic]This action cannot be undone.[/]
+                """
             ),
         ):
             result = Banner.delete().where(Banner.id == self.banner_id).execute()
@@ -122,5 +127,10 @@ class Main(Screen):
             else:
                 self.notify("Failed to delete banner", severity="error")
 
+    def action_gen_ascii_text_banner(self):
+        self.app.push_screen(
+            GenAsciiText()
+        )
+        
     def action_request_quit(self):
         self.app.exit()
