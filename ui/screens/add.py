@@ -17,12 +17,18 @@ class AddBanner(Screen):
 
     BINDINGS = [
         Binding("ctrl+s", "save_banner", "Save"),
-        Binding("ctrl+q", "go_back", "Back"),
+        Binding("ctrl+q,escape", "go_back", "Back"),
     ]
 
-    def __init__(self, **kwargs):
+    def __init__(
+            self,
+            **kwargs
+    ):
         super().__init__(**kwargs)
-        self.banner = Banner(content="", markedUp="")
+        self.banner = Banner(
+            content="",
+            markedUp=""
+        )
 
     def compose(self):
         yield Header()
@@ -33,7 +39,7 @@ class AddBanner(Screen):
         yield Footer()
 
     def on_mount(self):
-        self.title = f"Banner #{self.banner.id}"
+        self.title = f"New Banner"
         text_edit: TextArea = self.query_one("#add_textarea")
         text_edit.text = self.banner.content
 

@@ -5,11 +5,9 @@ from textual.widgets import Header, Footer, TabbedContent, TabPane, TextArea, Ri
 from textual.reactive import var
 
 from ...models import Banner
-from ..dialogs.info import InformationDialog
+from ..dialogs import InformationDialog, ErrorDialog
 
-from ..dialogs.error import ErrorDialog
-
-
+# TODO: Allow editing of original content along with markup
 class EditBanner(Screen):
 
     banner_id = var(0)
@@ -20,7 +18,7 @@ class EditBanner(Screen):
         Binding("ctrl+s", "save_banner", "Save"),
         Binding("ctrl+e", "show_tab('edit_tab')", "Edit"),
         Binding("ctrl+p", "show_tab('preview_tab')", "Preview"),
-        Binding("ctrl+q", "go_back", "Back"),
+        Binding("ctrl+q,escape", "go_back", "Back"),
     ]
 
     def __init__(self, banner_id: int, **kwargs):

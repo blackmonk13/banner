@@ -22,11 +22,11 @@ class Main(Screen):
     banner_id = var(0)
 
     BINDINGS = [
-        Binding("ctrl+i", "add_banner", "Add"),
+        Binding("ctrl+a,ctrl+i,insert", "add_banner", "Add"),
         Binding("ctrl+e", "edit_banner", "Edit"),
         Binding("ctrl+g", "gen_ascii_text_banner", "Gen. ASCII Text"),
-        Binding("ctrl+d", "delete_banner", "Delete"),
-        Binding("ctrl+q", "request_quit", "Quit"),
+        Binding("ctrl+d,delete", "delete_banner", "Delete"),
+        Binding("ctrl+q,escape", "request_quit", "Quit"),
         Binding("left,up", "navigate(0)", "", show=False),
         Binding("right,down", "navigate(1)", "", show=False),
     ]

@@ -3,5 +3,8 @@
 import asyncio
 from .app import run
 
-if __name__ == "__main__":
+def main() -> None:
     asyncio.run(run())
+
+if __name__ == "__main__":
+    main()

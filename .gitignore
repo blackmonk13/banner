@@ -161,3 +161,4 @@ cython_debug/
 banners.db
 scratch/
 banner_old.py
+TODO.md

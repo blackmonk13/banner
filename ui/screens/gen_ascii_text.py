@@ -27,9 +27,13 @@ class GenAsciiText(Screen):
         Binding("ctrl+q", "go_back", "Back"),
     ]
 
-    def __init__(self, **kwargs):
+    def __init__(self, text: str, **kwargs):
         super().__init__(**kwargs)
-        self.banner = Banner(content="", markedUp="")
+        self.text = text
+        self.banner = Banner(
+            content="",
+            markedUp=""
+        )
 
     def compose(self) -> ComposeResult:
         yield Header()
@@ -92,11 +96,11 @@ class GenAsciiText(Screen):
 
     def watch_selected_font(self, selected_font: str) -> None:
         self.art_text = text2art(self.text, font=selected_font)
-            
+
     def watch_art_text(self, art_text: str) -> None:
         self.update_preview(art_text)
         self.banner.content = art_text
-        
+
     def get_textart(self, text: str) -> str:
         art_text = text2art(text, font=self.selected_font)
         return art_text

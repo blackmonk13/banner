@@ -1,4 +1,7 @@
-"""A terminal-based Markdown document viewer, written in Textual."""
+"""
+A terminal-based application to manage and display 
+ASCII art and rich-text banners, written in Textual.
+"""
 
 __author__ = "blackmonk13"
 __copyright__ = "Copyright blackmonk13"

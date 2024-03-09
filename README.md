@@ -3,123 +3,63 @@
 ## Table of Contents
 
 - [About](#about)
-- [Getting Started](#getting_started)
+- [Installation](#installation)
+  - [Regular Users](#regular-users)
+  - [Setting up a Random Banner on Terminal Startup](#terminal-startup)
 - [Usage](#usage)
-- [Contributing](../CONTRIBUTING.md)
+- [Contributing](#contributing)
 
 ## About <a name = "about"></a>
 
-Banner is a command-line application designed to manage and display beautiful ASCII art and rich-text banners for your terminal. Inspired by the eye-catching banners and ASCII art found in various CLI applications, this tool allows you to easily add, delete, update, search, and export your collection of banners. With the help of the [Prisma ORM](https://www.prisma.io/) for database interactions, the [Prisma Python Client](https://github.com/RobertCraigie/prisma-client-py), and the [Rich library](https://github.com/Textualize/rich) for enhanced console output, Banner brings creativity and fun to your terminal experience.
+Banner is a command-line application designed to manage and display beautiful ASCII art and rich-text banners for your terminal. Inspired by the eye-catching banners and ASCII art found in various CLI applications, this tool allows you to easily add, delete, edit, show, and export your collection of banners.
 
-## Getting Started <a name = "getting_started"></a>
+## Installation <a name = "installation"></a>
 
-These instructions will help you get a copy of the project up and running on your local machine for development and testing purposes.
+### Regular Users <a name="regular-users"></a>
 
-
-### Prerequisites
-
-You need to have Python 3.7 or later installed on your machine. You can download it from the [official Python website](https://www.python.org/downloads/).
-
-### One-liner Installation and Setup
-
-To install Banner and set it up for shell integration, run the following command:
+For regular users, install Banner using `pip` directly from GitHub:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/blackmonk13/banner/main/setup.sh -o setup.sh && chmod +x setup.sh && ./setup.sh
+pip install git+https://github.com/blackmonk13/banner.git
 ```
 
-### Installing
+This command will install Banner and its dependencies, allowing you to run the `banner` command directly from your terminal without any hassle.
 
-1. Clone the repository to your local machine:
+#### Setting up a Random Banner on Terminal Startup <a name="terminal-startup"></a>
 
-   ```bash
-   git clone https://github.com/blackmonk13/banner.git
-   ```
+To set up a random banner to display every time you open a new terminal on Unix-based systems (such as Linux or macOS), follow these steps:
 
-2. Change to the project directory:
-
-   ```bash
-   cd banner
-   ```
-
-3. Create a virtual environment:
+1. Open your preferred text editor.
+2. Create a new file named `.bashrc` in your home directory if it doesn't already exist. If you're using macOS with the default zsh shell, create or edit the `.zshrc` file instead.
+3. Add the following line at the end of the file:
 
    ```bash
-   python -m venv .venv
+   banner show random
    ```
 
-4. Activate the virtual environment:
-
-   ```bash
-   source venv/bin/activate
-   ```
-
-5. Install the required packages:
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-### Setting up Random Banner on Terminal Startup
-
-To display a random banner every time a new terminal is started, follow these steps:
-
-1. Create a shell script named `random_banner.sh` in the project directory with the following content:
-
-   ```bash
-   #!/bin/bash
-   
-   # Activate the virtual environment
-   source venv/bin/activate
-   
-   # Run the banner.py script with the random command
-   python banner.py random
-   
-   # Deactivate the virtual environment
-   deactivate
-   ```
-
-2. Make the script executable:
-
-   ```bash
-   chmod +x random_banner.sh
-   ```
-
-3. Open the shell's startup file (e.g., `.bashrc` for Bash or `.zshrc` for Zsh) in a text editor:
-
-   ```bash
-   nano ~/.bashrc
-   ```
-   or
-   ```bash
-   nano ~/.zshrc
-   ```
-
-4. Add the following line at the end of the file to run the `random_banner.sh` script every time a new terminal is started:
-
-   ```bash
-   ~/path/to/banner/random_banner.sh
-   ```
-
-5. Save and close the file.
-
-6. Reload the shell's configuration:
+4. Save the file and close the text editor.
+5. To apply the changes, run the following command in your terminal:
 
    ```bash
    source ~/.bashrc
    ```
-   or
+
+   Or, if you're using macOS with the default zsh shell:
+
    ```bash
    source ~/.zshrc
    ```
 
-Now, every time a new terminal is started, the `random_banner.sh` script will run, activating the virtual environment, displaying a random banner, and then deactivating the virtual environment.
+Now, every time you open a new terminal window or tab, a random banner will be displayed. Enjoy!
+
+For developers or those who want to contribute to the project, follow the instructions in the [Contributing](#contributing) section.
 
 ## Usage <a name = "usage"></a>
 
 To use Banner, run the following command:
 
 ```bash
-python banner.py [command] [options]
+banner [command] [options]
 ```
 
 Here are some examples of available commands:
@@ -127,67 +67,111 @@ Here are some examples of available commands:
 - Add a new banner:
 
   ```bash
-  python banner.py add "Hello, World!"
+  banner add "Hello, World!"
   ```
 
-- List all banners:
+  You can also add banners from files or URLs:
 
   ```bash
-  python banner.py list --page 1 --page_size 10
+  banner add /path/to/banner.txt
+  banner add http://example.com/banner.txt
   ```
 
-- Display a random banner:
+  To generate ASCII art from the input text, use the `--ascii` flag:
 
   ```bash
-  python banner.py random
+  banner add "Hello, World!" --ascii
   ```
 
-- Update a banner:
+  You can choose a specific font for ASCII art using the `--font` option:
 
   ```bash
-  python banner.py update 1 --editor nano
+  banner add "Hello, World!" --ascii --font "standard"
   ```
 
-- Search for banners containing a keyword:
+  To print the generated ASCII text to the console instead of adding it as a banner, use the `--dry-run` flag:
 
   ```bash
-  python banner.py search keyword
+  banner add "Hello, World!" --ascii --dry-run
   ```
 
-- Import a banner from a file:
+- Delete a banner:
 
   ```bash
-  python banner.py add /path/to/banner.txt
+  banner delete 1
   ```
 
-- Import a banner from a URL:
+- Edit a banner:
 
   ```bash
-  python banner.py add http://example.com/banner.txt
-  ```
-
-- Export banners to a single file:
-
-  ```bash
-  python banner.py export --single-file --separator "\n===\n" output.txt
-  ```
-
-- Export banners to multiple files:
-
-  ```bash
-  python banner.py export --base-name "my_banner" --extension "md"
+  banner edit 1
   ```
 
 - Reset the markup of a banner:
 
   ```bash
-  python banner.py reset 1
+  banner reset 1
   ```
+
+- Show a banner:
+
+  ```bash
+  banner show 1
+  ```
+
+  To show a random banner:
+
+  ```bash
+  banner show random
+  ```
+
+  To print the content of the banner rather than the markup, use the `--content-only` flag:
+
+  ```bash
+  banner show 1 --content-only
+  ```
+
+- Export banners to a file or multiple files:
+
+  ```bash
+  banner export --single-file output.txt
+  ```
+
+  This will export all banners to a single file named `output.txt`. You can also specify a separator between banners:
+
+  ```bash
+  banner export --single-file --separator "\n===\n" output.txt
+  ```
+
+  To export banners to multiple files, use the `--base-name` and `--extension` options:
+
+  ```bash
+  banner export --base-name "my_banner" --extension "md"
+  ```
+
+  This will create files with names like `my_banner_1.md`, `my_banner_2.md`, etc.
 
 For more information on available commands and options, run:
 
 ```bash
-python banner.py --help
+banner --help
 ```
 
-With Banner, you can easily manage and enjoy your collection of ASCII  art and rich-text banners, making your terminal experience more  enjoyable and creative.
+With Banner, you can easily manage and enjoy your collection of ASCII art and rich-text banners, making your terminal experience more enjoyable and creative.
+
+## Contributing <a name="contributing"></a>
+
+We welcome contributions from the community! If you'd like to contribute to Banner, please follow these steps:
+
+1. Fork the repository and create a new branch for your changes.
+4. Commit your changes and push them to your fork.
+5. Open a pull request against the main branch of the original repository.
+
+Please make sure that your contributions adhere to the project's coding style and guidelines.
+
+Before submitting a pull request, please make sure that:
+
+1. Your changes do not introduce any new bugs or regressions.
+4. Your code is well-documented and easy to understand.
+
+We appreciate your help in making Banner even better!
