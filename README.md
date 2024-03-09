@@ -20,7 +20,7 @@ Banner is a command-line application designed to manage and display beautiful AS
 For regular users, install Banner using `pip` directly from GitHub:
 
 ```bash
-pip install git+https://github.com/blackmonk13/banner.git
+pip install https://github.com/blackmonk13/banner/releases/download/v1.0.0/banner-1.0.0-py3-none-any.whl
 ```
 
 This command will install Banner and its dependencies, allowing you to run the `banner` command directly from your terminal without any hassle.
