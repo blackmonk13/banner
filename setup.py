@@ -1,7 +1,5 @@
 import setuptools
 
-with open("banner/README.md", "r", encoding="utf-8") as fh:
-    long_description = fh.read()
 
 setuptools.setup(
     name="banner",
@@ -11,8 +9,6 @@ setuptools.setup(
     A terminal-based application to manage and display 
     ASCII art and rich-text banners, written in Textual.
     """,
-    long_description=long_description,
-    long_description_content_type="text/markdown",
     url="https://github.com/blackmonk13/banner",
     project_urls={
         "Bug Tracker": "https://github.com/blackmonk13/banner/issues",
