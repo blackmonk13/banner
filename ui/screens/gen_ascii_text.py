@@ -24,12 +24,13 @@ class GenAsciiText(Screen):
     BINDINGS = [
         Binding("ctrl+s", "save_banner", "Save"),
         Binding("ctrl+r", "regenerate", "Regenerate"),
-        Binding("ctrl+q", "go_back", "Back"),
+        Binding("ctrl+q,escape", "go_back", "Back"),
     ]
 
-    def __init__(self, text: str, **kwargs):
+    def __init__(self, text: str | None = None, **kwargs):
         super().__init__(**kwargs)
-        self.text = text
+        if text is not None:
+            self.text = text
         self.banner = Banner(
             content="",
             markedUp=""
