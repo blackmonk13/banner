@@ -10,7 +10,7 @@ from ..dialogs.info import InformationDialog
 from ..dialogs.error import ErrorDialog
 
 
-class AddBanner(Screen):
+class AddBanner(Screen[bool]):
 
     banner_content = var("")
     banner_markup = var("")
@@ -51,14 +51,12 @@ class AddBanner(Screen):
         result = self.banner.save()
         if result:
             self.notify(f"Banner #{self.banner.id} has been saved")
-            self.app.pop_screen()
+            self.dismiss(True)
         else:
-            self.app.push_screen(
-                ErrorDialog(
-                    "Error",
-                    f"Failed to save banner #{self.banner.id}"
-                )
+            self.notify(
+                f"Failed to save banner #{self.banner.id}",
+                severity="error"
             )
 
     def action_go_back(self):
-        self.app.pop_screen()
+        self.dismiss(False)

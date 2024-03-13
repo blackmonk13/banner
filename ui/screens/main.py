@@ -7,7 +7,7 @@ from textual.containers import Horizontal, Vertical, Container
 from textual.widgets import Footer, Header, Static, Button, RichLog
 from textual.reactive import var
 
-from ..dialogs.yes_or_no import YesNoDialog
+from ..dialogs import YesNoDialog
 
 from ...models import Banner
 
@@ -74,6 +74,7 @@ class Main(Screen):
         self.go_to_previous()
 
     def go_to_previous(self):
+        self.total_banners = Banner.select().count()
         if self.current_index > 1:
             self.current_index -= 1
         else:
@@ -85,10 +86,16 @@ class Main(Screen):
         self.go_to_next()
 
     def go_to_next(self):
+        self.total_banners = Banner.select().count()
         if self.current_index < self.total_banners:
             self.current_index += 1
         else:
             self.current_index = 1
+        self.update_banner_preview()
+
+    def go_to_last(self) -> None:
+        self.total_banners = Banner.select().count()
+        self.current_index = self.total_banners
         self.update_banner_preview()
 
     def action_navigate(self, direction: int):
@@ -97,10 +104,12 @@ class Main(Screen):
         else:
             self.go_to_previous()
 
-    def action_add_banner(self):
-        self.app.push_screen(
-            AddBanner()
-        )
+    @work
+    async def action_add_banner(self):
+        if await self.app.push_screen_wait(
+            AddBanner(),
+        ):
+            self.go_to_last()
 
     def action_edit_banner(self):
         self.app.push_screen(
@@ -131,6 +140,6 @@ class Main(Screen):
         self.app.push_screen(
             GenAsciiText()
         )
-        
+
     def action_request_quit(self):
         self.app.exit()
