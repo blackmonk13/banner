@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "banner"
+version = "1.0.0"
+authors = [
+  { name="blackmonk13" },
+]
+description = "A terminal-based application to manage and display ASCII art and rich-text banners, written in Textual."
+readme = "README.md"
+requires-python = ">=3.6"
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+keywords = ["banner", "ascii art", "rich text", "textual"]
+dependencies = [
+  "aiohttp",
+  "art",
+  "peewee",
+  "rich",
+  "textual",
+  "validators",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/blackmonk13/banner"
+"Bug Tracker" = "https://github.com/blackmonk13/banner/issues"
+
+[project.scripts]
+banner = "banner.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["banner", "banner.*"]
+exclude = ["*.tests", "*.tests.*", "tests.*", "tests"]
