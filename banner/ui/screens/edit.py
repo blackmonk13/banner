@@ -24,6 +24,7 @@ class EditBanner(Screen[bool]):
         Binding("ctrl+s", "save_banner", "Save"),
         Binding("ctrl+e", "show_tab('edit_tab')", "Edit"),
         Binding("ctrl+p", "show_tab('preview_tab')", "Preview"),
+        Binding("ctrl+r", "reset_markup", "Reset Markup"),
         Binding("ctrl+q,escape", "go_back", "Back"),
     ]
 
@@ -98,7 +99,23 @@ class EditBanner(Screen[bool]):
                 else:
                     # If the markup has not been changed during the current editing session, dismiss with False
                     self.dismiss(False)
-    
+
+    @work
+    async def action_reset_markup(self):
+        if self.banner is not None:
+            if await self.app.push_screen_wait(
+                YesNoDialog(
+                    "[red bold]Reset Banner Markup[/]?",
+                    "Are you sure you want to reset the banner markup? This action is irreversible."
+                )
+            ):
+                self.banner.markedUp = None
+                self.banner_markup = self.banner.content
+                text_edit: TextArea = self.query_one("#edit_textarea")
+                text_edit.text = self.banner_markup
+                self.banner.save()
+                self.notify(
+                    f"Banner markup has been reset to original content.")
 
     def watch_banner_id(self, banner_id: int | None):
         if banner_id is not None:
