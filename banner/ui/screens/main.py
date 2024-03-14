@@ -120,7 +120,6 @@ class Main(Screen):
         )
         if edited:
             self.update_banner_preview()
-        
 
     @work
     async def action_delete_banner(self):
@@ -140,10 +139,12 @@ class Main(Screen):
             else:
                 self.notify("Failed to delete banner", severity="error")
 
-    def action_gen_ascii_text_banner(self):
-        self.app.push_screen(
-            GenAsciiText()
-        )
+    @work
+    async def action_gen_ascii_text_banner(self):
+        if await self.app.push_screen_wait(
+            GenAsciiText(),
+        ):
+            self.go_to_last()
 
     def action_request_quit(self):
         self.app.exit()

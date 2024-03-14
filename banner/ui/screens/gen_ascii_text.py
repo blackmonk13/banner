@@ -13,13 +13,15 @@ from ..dialogs import YesNoDialog, ErrorDialog
 from ...models import Banner
 
 
-class GenAsciiText(Screen):
+class GenAsciiText(Screen[bool]):
     """Generates ASCII text."""
 
     fonts = ["random"] + ASCII_FONTS
     text = var("")
     art_text = var("")
     selected_font = var("random")
+
+    banner: var[Banner | None] = var(None)
 
     BINDINGS = [
         Binding("ctrl+s", "save_banner", "Save"),
@@ -62,8 +64,7 @@ class GenAsciiText(Screen):
         yield Footer()
 
     def on_mount(self):
-        self.title = f"Banner #{self.banner.id}"
-        # self.banner.content = self.get_textart()
+        self.title = f"Generate Ascii Text"
 
     @on(Select.Changed, "#font_select")
     def select_changed(self, event: Select.Changed) -> None:
@@ -77,20 +78,34 @@ class GenAsciiText(Screen):
         self.art_text = text2art(self.text, font=self.selected_font)
 
     def action_save_banner(self) -> None:
-        result = self.banner.save()
-        if result:
-            self.notify(f"Banner #{self.banner.id} has been saved")
-            self.app.pop_screen()
-        else:
-            self.app.push_screen(
-                ErrorDialog(
-                    "Error",
-                    f"Failed to save banner #{self.banner.id}"
-                )
-            )
+        if self.banner is not None:
+            if self.banner.is_dirty():
+                result = self.banner.save()
+                if result:
+                    self.notify(f"Banner #{self.banner.id} has been saved")
+                else:
+                    self.notify(
+                        f"Failed to save banner #{self.banner.id}",
+                        severity="error"
+                    )
 
-    def action_go_back(self) -> None:
-        self.app.pop_screen()
+    @work
+    async def action_go_back(self):
+        if self.banner is not None:
+            if self.banner.is_dirty():
+                if await self.app.push_screen_wait(
+                    YesNoDialog(
+                        "[red bold]Save Banner Changes[/]?",
+                        "You have unsaved changes. Would you like to save them?"
+                    )
+                ):
+                    self.action_save_banner()
+                    self.dismiss(True)
+            else:
+                if self.banner.content is not None and self.banner.content != "":
+                    self.dismiss(True)
+                else:
+                    self.dismiss(False)
 
     def watch_text(self, text: str) -> None:
         self.art_text = text2art(text, font=self.selected_font)
