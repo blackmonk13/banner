@@ -17,13 +17,25 @@ Banner is a command-line application designed to manage and display beautiful AS
 
 ### Regular Users <a name="regular-users"></a>
 
-For regular users, install Banner using `pip` directly from GitHub:
+For regular users, you can install Banner using `pip` by fetching the latest release's wheel file URL from GitHub.
+
+#### Unix-like systems (macOS, Linux)
+
+Run the following command in your terminal:
 
 ```bash
-pip install https://github.com/blackmonk13/banner/releases/download/v1.0.0/banner-1.0.0-py3-none-any.whl
+curl -s https://api.github.com/repos/blackmonk13/banner/releases/latest | jq -r '.assets[] | select(.name | endswith(".whl")) | .browser_download_url' | xargs pip install
 ```
 
-This command will install Banner and its dependencies, allowing you to run the `banner` command directly from your terminal without any hassle.
+#### Windows
+
+Open PowerShell and run the following command:
+
+```powershell
+(Invoke-WebRequest -Uri "https://api.github.com/repos/blackmonk13/banner/releases/latest" -UseBasicParsing | ConvertFrom-Json).assets | Where-Object { $_.name -like "*whl" } | ForEach-Object { pip install $_.browser_download_url }
+```
+
+This command will install Banner and its dependencies, allowing you to run the `banner` command directly from your terminal or Command Prompt without any hassle.
 
 #### Setting up a Random Banner on Terminal Startup <a name="terminal-startup"></a>
 
