@@ -111,12 +111,16 @@ class Main(Screen):
         ):
             self.go_to_last()
 
-    def action_edit_banner(self):
-        self.app.push_screen(
+    @work
+    async def action_edit_banner(self):
+        edited = await self.app.push_screen_wait(
             EditBanner(
                 banner_id=self.banner_id
             )
         )
+        if edited:
+            self.update_banner_preview()
+        
 
     @work
     async def action_delete_banner(self):
