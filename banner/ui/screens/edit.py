@@ -13,10 +13,10 @@ from ..dialogs import InformationDialog, ErrorDialog, YesNoDialog
 class EditBanner(Screen[bool]):
 
     banner_id: var[int | None] = var(None)
-    banner_content = var("")
+    banner_content: var[str | None] = var(None)
     banner_markup: var[str | None] = var(None)
 
-    initial_markup = var("")
+    initial_markup: var[str | None] = var(None)
 
     banner: var[Banner | None] = var(None)
 
