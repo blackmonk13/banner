@@ -2,9 +2,8 @@ name: Build Package and Upload to GitHub Releases
 
 on:
   push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
+    tags:
+      - "v*.*.*"
 
 jobs:
   deploy:
